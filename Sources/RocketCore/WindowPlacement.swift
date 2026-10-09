@@ -1,4 +1,4 @@
-import Foundation
+import CoreGraphics
 
 public enum WindowPlacement: String, CaseIterable, Sendable {
   case leftHalf

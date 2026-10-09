@@ -110,7 +110,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     if tiling.requestAccessibilityPermission() == .granted {
       message = "Window shortcuts are ready. Focus another app and use a window shortcut."
     } else {
-      message = "Enable Rocket in System Settings → Privacy & Security → Accessibility. "
+      message =
+        "Enable Rocket in System Settings → Privacy & Security → Accessibility. "
         + "Then focus another app and retry a window shortcut."
     }
     feedback.show(message)

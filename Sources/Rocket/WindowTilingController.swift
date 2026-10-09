@@ -36,10 +36,10 @@ enum WindowTilingError: LocalizedError {
       return "No available display was found. Try again after your display is connected."
     case .operationInProgress:
       return "A window move is still in progress. Try the shortcut again in a moment."
-    case let .accessibilityFailure(code):
+    case .accessibilityFailure(let code):
       return "The app could not complete the window operation "
         + "(Accessibility error \(code)). Try again."
-    case let .placementRejected(restored):
+    case .placementRejected(let restored):
       let outcome =
         restored ? "The original frame was restored." : "The window may have moved or resized."
       return "The app did not accept this placement, possibly because of its minimum window size. "
