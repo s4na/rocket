@@ -25,7 +25,7 @@ Pull requests run one standard `macos-15` GitHub-hosted job for formatting lint,
 
 ## Manual checks
 
-CI builds the app but does not validate interactive macOS behavior. Before distributing, check first launch, repeated shortcuts, Escape/Close, clicking another app, quitting/relaunching, a conflicting shortcut, full-screen Spaces, and multiple displays (including a Dock on another edge). Window actions will be added in the next chained change.
+CI builds the app but does not validate interactive macOS behavior. Before distributing, check first launch, repeated shortcuts, Escape/Close, clicking another app, quitting/relaunching, a conflicting shortcut, full-screen Spaces, and multiple displays (including a Dock on another edge). See the window-shortcut guide for additional window-management checks.
 
 ## Register and launch applications
 
@@ -36,3 +36,15 @@ The local registry is stored at `~/Library/Application Support/Rocket/applicatio
 Additional manual checks: register/cancel the picker repeatedly; search, arrows, Return and Escape with Japanese IME; paste into search; restart and verify persistence; move/delete a registered app; re-register it; remove only its entry; simulate a failed launch; verify corrupted storage is not overwritten. Picker sheets keep the host window open.
 
 With the picker open, switch to another app, then use the global shortcut or menu-bar entry to restore the same picker. For a slow launch, dismiss and reopen Rocket before completion: the old request should not activate its target or close the new launcher. The requested app can still finish launching in the background; Rocket does not terminate it. Also open the picker while a launch is pending and verify its completion does not interrupt the sheet.
+
+## Window shortcuts
+
+For the focused window in another app, hold **Control–Option–Command** and press:
+
+- Left/Right/Up/Down: corresponding half
+- 1/2/3/4: top-left/top-right/bottom-left/bottom-right quarter (physical number keys)
+- Return: maximize within the usable display area, not macOS full screen
+
+Enable this optional feature with **Window Shortcuts → Enable Window Shortcuts** in Rocket's menu, then grant Accessibility access yourself in System Settings. Launcher usage does not request that permission. Failed operations show a nonactivating notice and preserve keyboard focus; the latest error also remains in the menu-bar icon's tooltip. Conflicting shortcuts are reported individually; other shortcuts remain registered. Change the conflicting shortcut in the other app and restart Rocket to retry.
+
+See [window shortcuts](docs/window-shortcuts.md) for permissions, multiple displays, unsupported windows, minimum-size constraints, and manual checks.
