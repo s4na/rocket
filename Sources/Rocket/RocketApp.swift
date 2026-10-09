@@ -20,6 +20,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   private var launcher: LauncherWindowController?
 
   func applicationDidFinishLaunching(_ notification: Notification) {
+    ApplicationMenu.install()
     launcher = LauncherWindowController()
     let item = NSStatusBar.system.statusItem(withLength: NSStatusItem.squareLength)
     item.button?.image = NSImage(systemSymbolName: "paperplane", accessibilityDescription: "Rocket")

@@ -15,4 +15,17 @@ final class LauncherPresentationTests: XCTestCase {
     presentation.show()
     XCTAssertTrue(presentation.isPresented)
   }
+
+  func testOldLaunchCannotDismissReopenedPresentation() {
+    var presentation = LauncherPresentation()
+    presentation.show()
+    let launchSession = presentation.sessionID
+    presentation.show()
+    XCTAssertTrue(presentation.isCurrentSession(launchSession))
+    presentation.dismiss()
+    XCTAssertFalse(presentation.isCurrentSession(launchSession))
+    presentation.show()
+    XCTAssertFalse(presentation.isCurrentSession(launchSession))
+    XCTAssertTrue(presentation.isCurrentSession(presentation.sessionID))
+  }
 }
