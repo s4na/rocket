@@ -18,7 +18,7 @@ struct LauncherView: View {
   var body: some View {
     VStack(alignment: .leading, spacing: 12) {
       HStack {
-        Text("Rocket").font(.title2.bold())
+        Text("Rocket（ロケラン）").font(.title2.bold())
         Spacer()
         Button("Add Applications…", action: registry.addApplications)
           .disabled(!registry.canEdit)
