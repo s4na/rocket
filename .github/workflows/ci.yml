@@ -1,0 +1,30 @@
+name: CI
+on:
+  pull_request:
+  push:
+    branches: [main]
+permissions:
+  contents: read
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    # Public repos use standard hosted runners for free. Skip rather than bill if made private.
+    if: github.event.repository.private == false
+    runs-on: macos-15
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - name: Toolchain
+        run: swift --version
+      - name: Lint
+        run: swift format lint --strict --recursive Package.swift Sources Tests
+      - name: Test
+        if: ${{ !cancelled() }}
+        run: swift test
+      - name: Build app bundle
+        if: ${{ !cancelled() }}
+        run: bash scripts/build-app.sh release
