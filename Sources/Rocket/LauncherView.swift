@@ -27,7 +27,7 @@ struct LauncherView: View {
       LauncherSearchField(
         text: $query, onMove: moveSelection, onSubmit: launchSelected, onCancel: onDismiss
       )
-        .frame(height: 28)
+      .frame(height: 28)
       applicationList
       if let message = registry.errorMessage {
         HStack(alignment: .top) {
@@ -65,10 +65,12 @@ struct LauncherView: View {
               .accessibilityHidden(true)
             VStack(alignment: .leading, spacing: 2) {
               Text(application.name)
-              Text(registry.missingIDs.contains(application.id)
-                ? "Application unavailable. Add it again to update its location."
-                : application.bundleIdentifier)
-                .font(.caption).foregroundStyle(.secondary)
+              Text(
+                registry.missingIDs.contains(application.id)
+                  ? "Application unavailable. Add it again to update its location."
+                  : application.bundleIdentifier
+              )
+              .font(.caption).foregroundStyle(.secondary)
             }
             Spacer()
           }
@@ -84,11 +86,13 @@ struct LauncherView: View {
       .listStyle(.inset)
       .overlay {
         if filteredApplications.isEmpty {
-          Text(registry.applications.isEmpty
-            ? "Add applications to get started."
-            : "No matching applications.")
-            .foregroundStyle(.secondary)
-            .allowsHitTesting(false)
+          Text(
+            registry.applications.isEmpty
+              ? "Add applications to get started."
+              : "No matching applications."
+          )
+          .foregroundStyle(.secondary)
+          .allowsHitTesting(false)
         }
       }
       .onChange(of: selectedID) { id in

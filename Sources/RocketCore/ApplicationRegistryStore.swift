@@ -12,8 +12,10 @@ public struct ApplicationRegistryStore {
     let data: Data
     do {
       data = try Data(contentsOf: fileURL)
-    } catch let error as NSError where error.domain == NSCocoaErrorDomain
-      && error.code == NSFileReadNoSuchFileError {
+    } catch let error as NSError {
+      guard error.domain == NSCocoaErrorDomain, error.code == NSFileReadNoSuchFileError else {
+        throw error
+      }
       return []
     }
     let document = try JSONDecoder().decode(Document.self, from: data)
@@ -40,10 +42,10 @@ public struct ApplicationRegistryStore {
     var bundleIdentifiers = Set<String>()
     for application in applications {
       guard !application.name.isEmpty,
-         !application.bundleIdentifier.isEmpty,
-         application.path.hasPrefix("/"),
-         identifiers.insert(application.id).inserted,
-         bundleIdentifiers.insert(application.bundleIdentifier).inserted
+        !application.bundleIdentifier.isEmpty,
+        application.path.hasPrefix("/"),
+        identifiers.insert(application.id).inserted,
+        bundleIdentifiers.insert(application.bundleIdentifier).inserted
       else { throw StorageError.invalidApplications }
     }
   }

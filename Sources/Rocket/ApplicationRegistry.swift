@@ -48,7 +48,8 @@ final class ApplicationRegistry: ObservableObject {
       errorMessage = nil
     } catch {
       canEdit = false
-      errorMessage = "Could not load the application list. The saved file was left unchanged. "
+      errorMessage =
+        "Could not load the application list. The saved file was left unchanged. "
         + error.localizedDescription
     }
   }
@@ -81,7 +82,7 @@ final class ApplicationRegistry: ObservableObject {
           id: existing.map { updated[$0].id } ?? UUID(),
           name: (bundle.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String)
             ?? (bundle.object(forInfoDictionaryKey: "CFBundleName") as? String)
-            ?? url.deletingPathExtension().lastPathComponent,
+              ?? url.deletingPathExtension().lastPathComponent,
           bundleIdentifier: identifier,
           path: url.path,
           bookmark: try url.bookmarkData(
@@ -163,10 +164,10 @@ final class ApplicationRegistry: ObservableObject {
 
   private func applicationBundle(at url: URL) throws -> Bundle {
     guard url.isFileURL, url.pathExtension.lowercased() == "app",
-       let bundle = Bundle(url: url),
-       let identifier = bundle.bundleIdentifier, !identifier.isEmpty,
-       let executable = bundle.executableURL,
-       FileManager.default.isExecutableFile(atPath: executable.path)
+      let bundle = Bundle(url: url),
+      let identifier = bundle.bundleIdentifier, !identifier.isEmpty,
+      let executable = bundle.executableURL,
+      FileManager.default.isExecutableFile(atPath: executable.path)
     else { throw RegistryError.invalidApplication(url.lastPathComponent) }
     return bundle
   }
