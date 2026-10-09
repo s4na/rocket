@@ -112,7 +112,9 @@ final class ApplicationRegistry: ObservableObject {
     }
   }
 
-  func launch(_ application: RegisteredApplication, completion: @escaping () -> Void) {
+  func launch(
+    _ application: RegisteredApplication, completion: @escaping (NSRunningApplication) -> Void
+  ) {
     guard !isLaunching else { return }
     guard let resolution = resolve(application) else {
       missingIDs.insert(application.id)
@@ -120,18 +122,22 @@ final class ApplicationRegistry: ObservableObject {
       return
     }
     let configuration = NSWorkspace.OpenConfiguration()
-    configuration.activates = true
+    // The presentation owner decides whether this request still owns foreground focus.
+    configuration.activates = false
     isLaunching = true
     NSWorkspace.shared.openApplication(at: resolution.url, configuration: configuration) {
-      [weak self] _, error in
+      [weak self] runningApplication, error in
       DispatchQueue.main.async {
         guard let self else { return }
         self.isLaunching = false
         if let error {
           self.errorMessage = "Could not open \(application.name). " + error.localizedDescription
-        } else {
+        } else if let runningApplication {
           self.errorMessage = nil
-          completion()
+          completion(runningApplication)
+        } else {
+          self.errorMessage =
+            "Could not open \(application.name). No running application was returned."
         }
       }
     }

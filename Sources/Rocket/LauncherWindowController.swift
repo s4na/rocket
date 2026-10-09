@@ -36,7 +36,13 @@ final class LauncherWindowController: NSObject, NSWindowDelegate {
   }
 
   func show() {
-    guard panel.attachedSheet == nil else { return }
+    if let sheet = panel.attachedSheet {
+      // Reopen the existing picker after another app hid this panel.
+      NSApp.activate(ignoringOtherApps: true)
+      panel.orderFront(nil)
+      sheet.makeKeyAndOrderFront(nil)
+      return
+    }
     registry.refresh()
     if !presentation.isPresented {
       previousApplication = NSWorkspace.shared.frontmostApplication
@@ -55,9 +61,13 @@ final class LauncherWindowController: NSObject, NSWindowDelegate {
 
   private func launch(_ application: RegisteredApplication) {
     let sessionID = presentation.sessionID
-    registry.launch(application) { [weak self] in
-      guard let self, self.presentation.isCurrentSession(sessionID) else { return }
+    registry.launch(application) { [weak self] runningApplication in
+      guard let self, self.presentation.isCurrentSession(sessionID),
+        self.panel.attachedSheet == nil
+      else { return }
+      // Only this still-current request may transfer focus after an asynchronous launch.
       self.dismiss(restoreFocus: false)
+      runningApplication.activate(options: [])
     }
   }
 

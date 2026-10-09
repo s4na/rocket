@@ -29,8 +29,10 @@ CI builds the app but does not validate interactive macOS behavior. Before distr
 
 ## Register and launch applications
 
-Use **Add Applications** to select `.app` bundles with the native picker. Search by name or bundle identifier, use Up/Down to select, and Return to launch; click an entry or use Open as well. Escape closes Rocket. The search field preserves Japanese IME composition (including Return to confirm text), and supports normal Cut/Copy/Paste/Select All shortcuts.
+Use **Add Applications** to select `.app` bundles with the native picker. Search by name or bundle identifier, use Up/Down to select, and Return to launch; double-click an entry or use Open as well. Escape closes Rocket. The search field preserves Japanese IME composition (including Return to confirm text), and supports normal Cut/Copy/Paste/Select All shortcuts.
 
 The local registry is stored at `~/Library/Application Support/Rocket/applications.json`. Entries keep a stable ID, bundle identifier, and a bookmark; relocated applications are resolved when possible. Missing apps remain listed so you can re-register or remove them. Removing a registry entry never deletes the app. A failed launch is shown in the launcher. Corrupt or newer-version storage is preserved with edits disabled; use Reload after repairing/restoring the file. No cloud sync, shell commands, or extra permissions are used.
 
 Additional manual checks: register/cancel the picker repeatedly; search, arrows, Return and Escape with Japanese IME; paste into search; restart and verify persistence; move/delete a registered app; re-register it; remove only its entry; simulate a failed launch; verify corrupted storage is not overwritten. Picker sheets keep the host window open.
+
+With the picker open, switch to another app, then use the global shortcut or menu-bar entry to restore the same picker. For a slow launch, dismiss and reopen Rocket before completion: the old request should not activate its target or close the new launcher. The requested app can still finish launching in the background; Rocket does not terminate it. Also open the picker while a launch is pending and verify its completion does not interrupt the sheet.
