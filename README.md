@@ -1,4 +1,6 @@
-# Rocket
+# Rocket（ロケット）
+
+ロケットという名前のランチャー、略して **ロケラン**。正式名は **Rocket（ロケット）** です。
 
 A launcher app for macOS, written in Swift with AppKit and SwiftUI. Requires macOS 13 or later.
 
