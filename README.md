@@ -15,7 +15,23 @@ bash scripts/build-app.sh
 open .build/Rocket.app
 ```
 
-Control–Option–Space opens a single launcher window on the pointer's display. Repeating the shortcut focuses the same window. Escape or Close dismisses it and restores the previous app; choosing another app dismisses Rocket without stealing focus. The menu-bar icon can open Rocket or quit it. If another app owns the shortcut, Rocket reports the conflict and the menu-bar entry remains available. Change that app's shortcut and restart Rocket to retry.
+## 使い方
+
+1. 上の手順でアプリをビルドして起動します。メニューバーに紙飛行機のアイコンが表示されます。
+2. `Control–Option–Space` を押すとランチャーが開きます。反応しない場合はメニューバーのアイコンから **Open Rocket** を選んでください。
+3. **Add Applications…** から起動したい `.app` を登録し、検索欄に名前またはBundle IDを入力します。↑ / ↓ で選び、Return、**Open**、またはダブルクリックで起動します。
+4. **Remove** はRocketの登録だけを削除し、アプリ本体は削除しません。Escapeまたは**Close**で閉じると、直前に使っていたアプリに戻ります。
+5. Rocketを終了するには、メニューバーのアイコンから **Quit Rocket** を選びます。
+
+ウィンドウ配置を使う場合は、メニューバーから **Window Shortcuts → Enable Window Shortcuts** を選び、システム設定でRocketにアクセシビリティを許可します。その後、配置したいアプリのウィンドウを前面にして次のキーを押します。
+
+| 操作 | ショートカット（Control–Option–Command +） |
+| --- | --- |
+| 左 / 右 / 上 / 下半分 | ← / → / ↑ / ↓ |
+| 左上 / 右上 / 左下 / 右下の四分割 | 1 / 2 / 3 / 4 |
+| 最大化（メニューバーとDockを避ける） | Return |
+
+最大化はmacOSのフルスクリーン表示にはなりません。フルスクリーン中のウィンドウや、移動・サイズ変更に対応しないウィンドウは配置できません。ショートカットが他のアプリと競合するときは起動時に通知されるので、そのアプリ側のキーを変更してRocketを再起動してください。
 
 The launcher does not require Accessibility or Input Monitoring permission. The bundled development app is ad-hoc signed, not notarized or packaged for distribution. Build and open the `.app` rather than running the executable directly.
 
@@ -41,12 +57,6 @@ With the picker open, switch to another app, then use the global shortcut or men
 
 ## Window shortcuts
 
-For the focused window in another app, hold **Control–Option–Command** and press:
-
-- Left/Right/Up/Down: corresponding half
-- 1/2/3/4: top-left/top-right/bottom-left/bottom-right quarter (physical number keys)
-- Return: maximize within the usable display area, not macOS full screen
-
-Enable this optional feature with **Window Shortcuts → Enable Window Shortcuts** in Rocket's menu, then grant Accessibility access yourself in System Settings. Launcher usage does not request that permission. Failed operations show a nonactivating notice and preserve keyboard focus; the latest error also remains in the menu-bar icon's tooltip. Conflicting shortcuts are reported individually; other shortcuts remain registered. Change the conflicting shortcut in the other app and restart Rocket to retry.
+The shortcut map and setup steps are listed in [使い方](#使い方). Launcher usage does not request Accessibility access. Failed window operations show a nonactivating notice and preserve keyboard focus; the latest error also remains in the menu-bar icon's tooltip. Conflicting shortcuts are reported individually; other shortcuts remain registered.
 
 See [window shortcuts](docs/window-shortcuts.md) for permissions, multiple displays, unsupported windows, minimum-size constraints, and manual checks.
