@@ -28,10 +28,10 @@ open .build/Rocket.app
 | 操作 | ショートカット（Control–Option–Command +） |
 | --- | --- |
 | 左 / 右 / 上 / 下半分 | ← / → / ↑ / ↓ |
-| 左上 / 右上 / 左下 / 右下の四分割 | 1 / 2 / 3 / 4 |
+| 左上 / 右上 / 左下 / 右下の四分割 | 数字列の物理キー位置（US配列の1 / 2 / 3 / 4の位置） |
 | 最大化（メニューバーとDockを避ける） | Return |
 
-最大化はmacOSのフルスクリーン表示にはなりません。フルスクリーン中のウィンドウや、移動・サイズ変更に対応しないウィンドウは配置できません。ショートカットが他のアプリと競合するときは起動時に通知されるので、そのアプリ側のキーを変更してRocketを再起動してください。
+数字列のキーは入力文字ではなく物理位置で判定されるため、キーボード配列によっては表示文字と異なります。最大化はmacOSのフルスクリーン表示にはなりません。フルスクリーン中のウィンドウや、移動・サイズ変更に対応しないウィンドウは配置できません。ショートカットが他のアプリと競合するときは起動時に通知されるので、そのアプリ側のキーを変更してRocketを再起動してください。
 
 The launcher does not require Accessibility or Input Monitoring permission. The bundled development app is ad-hoc signed, not notarized or packaged for distribution. Build and open the `.app` rather than running the executable directly.
 
