@@ -21,6 +21,16 @@ require authorizing that build again; use the packaged Rocket app for testing.
 
 ## Behavior and limits
 
+- Hold **Control–Option–Command** with an arrow key to move the active window
+  directionally. An untiled window goes to the corresponding half. From a left
+  or right half, Up/Down selects that side's top/bottom quarter; from a top or
+  bottom half, Left/Right selects that row's left/right quarter. From a quarter,
+  an arrow moves to the neighboring quarter; pressing outward past an edge
+  expands to the corresponding half. For example, use `⌃⌥⌘→` to place a window
+  in the right half, then `⌃⌥⌘↑` for the top-right quarter.
+- Number-row keys at the physical US `1`–`4` positions remain available for
+  direct placement in the four quarters. Return maximizes to the usable display
+  area.
 - The target is captured at the instant the shortcut is handled. Opening the
   launcher earlier does not determine which app gets moved.
 - A window spanning displays uses the display with its largest intersection.
@@ -49,8 +59,11 @@ session and intentionally do not run in CI or grant permissions automatically.
    system prompt. Check the notice is visible while Rocket stays inactive and
    does not intercept clicks. Explicitly choose Enable Window Shortcuts and verify setup is
    initiated. Decline, retry, then grant access and retry.
-3. In TextEdit and Terminal, test left/right and top/bottom halves, all four
-   corners, and maximize. Check the Dock and menu bar remain unobstructed.
+3. In TextEdit and Terminal, use arrows to place an untiled window in each half,
+   refine each half into its two corners, move between neighboring corners, and
+   expand a corner by pressing outward. Test direct corner placement with the
+   number-row shortcuts and maximize. Check the Dock and menu bar stay
+   unobstructed.
 4. Focus app A, open/dismiss Rocket, then focus app B and use a window shortcut.
    Only app B should move. When Rocket itself is focused, reject the operation.
 5. Test displays positioned left, right, above, and below the primary display,
@@ -70,10 +83,13 @@ session and intentionally do not run in CI or grant permissions automatically.
 ## Developer integration
 
 Keep one `WindowTilingController` instance on the main actor. Register global
-hotkeys without activating Rocket and call:
+hotkeys without activating Rocket. Arrow shortcuts resolve a destination from
+the captured window frame; number-row and Return shortcuts specify a direct
+placement. The controller then moves that captured window and reports errors:
 
 ```swift
-tilingController.tileFrontmostWindow(.leftHalf) { result in
+let action = WindowShortcutAction.arrow(.left)
+tilingController.tileFrontmostWindow(action) { result in
     if case let .failure(error) = result {
         // Show this to the user via the app's existing feedback UI.
         showError(error.localizedDescription)

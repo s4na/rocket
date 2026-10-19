@@ -38,6 +38,62 @@ final class WindowGeometryTests: XCTestCase {
     XCTAssertEqual(top.union(bottom), visible)
   }
 
+  func testArrowsRefineHalfPlacementsIntoCorners() {
+    let visible = CGRect(x: 40, y: 80, width: 1_200, height: 800)
+    let cases: [(WindowPlacement, WindowArrow, WindowPlacement)] = [
+      (.rightHalf, .up, .topRight),
+      (.rightHalf, .down, .bottomRight),
+      (.leftHalf, .up, .topLeft),
+      (.leftHalf, .down, .bottomLeft),
+      (.topHalf, .left, .topLeft),
+      (.topHalf, .right, .topRight),
+      (.bottomHalf, .left, .bottomLeft),
+      (.bottomHalf, .right, .bottomRight),
+    ]
+
+    for (current, arrow, expected) in cases {
+      XCTAssertEqual(
+        WindowGeometry.placement(
+          for: arrow, from: WindowGeometry.targetFrame(for: current, in: visible), in: visible
+        ), expected,
+        "\(current) + \(arrow)"
+      )
+    }
+  }
+
+  func testArrowsMoveBetweenCornersAndExpandAtOuterEdges() {
+    let visible = CGRect(x: 40, y: 80, width: 1_200, height: 800)
+    let cases: [(WindowPlacement, WindowArrow, WindowPlacement)] = [
+      (.topRight, .left, .topLeft),
+      (.topRight, .down, .bottomRight),
+      (.topRight, .up, .topHalf),
+      (.topRight, .right, .rightHalf),
+      (.bottomLeft, .right, .bottomRight),
+      (.bottomLeft, .up, .topLeft),
+      (.bottomLeft, .left, .leftHalf),
+      (.bottomLeft, .down, .bottomHalf),
+    ]
+
+    for (current, arrow, expected) in cases {
+      XCTAssertEqual(
+        WindowGeometry.placement(
+          for: arrow, from: WindowGeometry.targetFrame(for: current, in: visible), in: visible
+        ), expected,
+        "\(current) + \(arrow)"
+      )
+    }
+  }
+
+  func testArrowFromUntiledWindowSelectsDirectionalHalf() {
+    let visible = CGRect(x: 40, y: 80, width: 1_200, height: 800)
+    let untiled = CGRect(x: 100, y: 100, width: 500, height: 300)
+
+    XCTAssertEqual(WindowGeometry.placement(for: .left, from: untiled, in: visible), .leftHalf)
+    XCTAssertEqual(WindowGeometry.placement(for: .right, from: untiled, in: visible), .rightHalf)
+    XCTAssertEqual(WindowGeometry.placement(for: .up, from: untiled, in: visible), .topHalf)
+    XCTAssertEqual(WindowGeometry.placement(for: .down, from: untiled, in: visible), .bottomHalf)
+  }
+
   func testCoordinateConversionUsesPrimaryDisplayForEveryDisplayPosition() {
     let primary = CGRect(x: 0, y: 0, width: 1_440, height: 900)
     let cases: [(CGRect, CGRect)] = [

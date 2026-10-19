@@ -70,7 +70,7 @@ final class WindowTilingController {
   /// Capture the application AND focused window now; never reuse launcher focus.
   /// Completion is always called on the main thread. No permission prompt occurs.
   func tileFrontmostWindow(
-    _ placement: WindowPlacement,
+    _ action: WindowShortcutAction,
     completion: @escaping (Result<Void, WindowTilingError>) -> Void
   ) {
     guard accessibilityStatus == .granted else {
@@ -108,7 +108,7 @@ final class WindowTilingController {
     operationInProgress = true
     workQueue.async {
       let result = WindowAccessibility.tile(
-        window, placement: placement, screens: screens, primaryScreenFrame: primary.frame
+        window, action: action, screens: screens, primaryScreenFrame: primary.frame
       )
       DispatchQueue.main.async {
         self.operationInProgress = false
@@ -140,7 +140,7 @@ private enum WindowAccessibility {
 
   static func tile(
     _ window: AXUIElement,
-    placement: WindowPlacement,
+    action: WindowShortcutAction,
     screens: [WindowScreen],
     primaryScreenFrame: CGRect
   ) -> Result<Void, WindowTilingError> {
@@ -152,6 +152,15 @@ private enum WindowAccessibility {
       )
       guard let index = WindowGeometry.screenIndex(for: appKitFrame, screens: screens) else {
         throw WindowTilingError.noScreen
+      }
+      let placement: WindowPlacement
+      switch action {
+      case .placement(let directPlacement):
+        placement = directPlacement
+      case .arrow(let arrow):
+        placement = WindowGeometry.placement(
+          for: arrow, from: appKitFrame, in: screens[index].visibleFrame
+        )
       }
       let target = WindowGeometry.accessibilityFrame(
         fromAppKit: WindowGeometry.targetFrame(for: placement, in: screens[index].visibleFrame),
