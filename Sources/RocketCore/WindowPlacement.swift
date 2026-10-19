@@ -26,6 +26,13 @@ public enum WindowPlacement: String, CaseIterable, Sendable {
   }
 }
 
+public enum WindowArrow: Sendable {
+  case left
+  case right
+  case up
+  case down
+}
+
 /// Frames use AppKit's global, bottom-left-origin coordinate system, in points.
 public struct WindowScreen: Equatable, Sendable {
   public let frame: CGRect
@@ -80,6 +87,58 @@ public enum WindowGeometry {
       )
     case .maximize:
       return visibleFrame
+    }
+  }
+
+  /// Uses the current tiled region to make arrow shortcuts move between halves
+  /// and neighboring quarters. From a half, the perpendicular arrow selects a
+  /// quarter; pressing outward from a quarter expands it to the matching half.
+  public static func placement(
+    for arrow: WindowArrow, from currentFrame: CGRect, in visibleFrame: CGRect
+  ) -> WindowPlacement {
+    let current = WindowPlacement.allCases.first {
+      approximatelyEqual(currentFrame, targetFrame(for: $0, in: visibleFrame))
+    }
+
+    switch arrow {
+    case .left:
+      switch current {
+      case .topLeft, .bottomLeft: return .leftHalf
+      case .topRight: return .topLeft
+      case .bottomRight: return .bottomLeft
+      case .topHalf: return .topLeft
+      case .bottomHalf: return .bottomLeft
+      default: return .leftHalf
+      }
+    case .right:
+      switch current {
+      case .topRight, .bottomRight: return .rightHalf
+      case .topLeft: return .topRight
+      case .bottomLeft: return .bottomRight
+      case .topHalf: return .topRight
+      case .bottomHalf: return .bottomRight
+      default: return .rightHalf
+      }
+    case .up:
+      switch current {
+      case .topLeft, .topRight: return .topHalf
+      case .bottomLeft: return .topLeft
+      case .bottomRight: return .topRight
+      case .leftHalf: return .topLeft
+      case .rightHalf: return .topRight
+      case .bottomHalf: return .topHalf
+      default: return .topHalf
+      }
+    case .down:
+      switch current {
+      case .bottomLeft, .bottomRight: return .bottomHalf
+      case .topLeft: return .bottomLeft
+      case .topRight: return .bottomRight
+      case .leftHalf: return .bottomLeft
+      case .rightHalf: return .bottomRight
+      case .topHalf: return .bottomHalf
+      default: return .bottomHalf
+      }
     }
   }
 

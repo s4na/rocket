@@ -77,7 +77,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
           try shortcuts.register(
             keyCode: shortcut.keyCode, modifiers: WindowShortcut.modifiers
           ) { [weak self] in
-            self?.tileWindow(shortcut.placement)
+            self?.tileWindow(shortcut.action)
           }
         } catch {
           failures.append(shortcut.label + ": " + error.localizedDescription)
@@ -96,8 +96,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     alert.runModal()
   }
 
-  private func tileWindow(_ placement: WindowPlacement) {
-    tiling.tileFrontmostWindow(placement) { [weak self] result in
+  private func tileWindow(_ action: WindowShortcutAction) {
+    tiling.tileFrontmostWindow(action) { [weak self] result in
       if case .failure(let error) = result {
         self?.statusItem?.button?.toolTip = error.localizedDescription
         self?.feedback.show(error.localizedDescription)
