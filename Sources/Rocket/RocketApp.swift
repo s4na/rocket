@@ -100,7 +100,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     tiling.tileFrontmostWindow(action) { [weak self] result in
       if case .failure(let error) = result {
         self?.statusItem?.button?.toolTip = error.localizedDescription
-        self?.feedback.show(error.localizedDescription)
+        if case .accessibilityPermissionRequired = error {
+          self?.feedback.showAccessibilityPermissionRequired()
+        } else {
+          self?.feedback.show(error.localizedDescription)
+        }
       }
     }
   }
@@ -110,9 +114,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     if tiling.requestAccessibilityPermission() == .granted {
       message = "Window shortcuts are ready. Focus another app and use a window shortcut."
     } else {
-      message =
-        "Enable Rocket in System Settings → Privacy & Security → Accessibility. "
-        + "Then focus another app and retry a window shortcut."
+      feedback.showAccessibilityPermissionRequired()
+      return
     }
     feedback.show(message)
   }

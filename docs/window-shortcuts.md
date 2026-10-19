@@ -14,10 +14,12 @@ The prompt returns before this choice is complete. After granting access, focus
 another app and retry a window shortcut. Relaunch Rocket if macOS requires it.
 
 If permission is missing or later revoked, the shortcut reports that setup is
-needed. It does not repeatedly open permission prompts. Screen Recording,
-Automation, and Input Monitoring permissions are not required by this feature.
-When developing an unsigned or ad-hoc-signed build, replacing/moving the app may
-require authorizing that build again; use the packaged Rocket app for testing.
+needed and shows an **Open Accessibility Settings…** link that opens the
+Accessibility pane in System Settings. It does not repeatedly open permission
+prompts. Screen Recording, Automation, and Input Monitoring permissions are
+not required by this feature. When developing an unsigned or ad-hoc-signed
+build, replacing/moving the app may require authorizing that build again; use
+the packaged Rocket app for testing.
 
 ## Behavior and limits
 
