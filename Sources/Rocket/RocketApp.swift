@@ -157,32 +157,47 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   private func isInstalledByRocketCask(appURL: URL, version: String) -> Bool {
-    guard appURL.lastPathComponent == "Rocket (s4na).app" else { return false }
-
     return ["/opt/homebrew", "/usr/local"].contains { prefix in
-      let receiptURL = URL(fileURLWithPath: prefix)
-        .appendingPathComponent("Caskroom/s4na-rocket/.metadata/INSTALL_RECEIPT.json")
+      let metadataURL = URL(fileURLWithPath: prefix)
+        .appendingPathComponent("Caskroom/s4na-rocket/.metadata")
       guard
-        let data = try? Data(contentsOf: receiptURL),
-        let receipt = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+        let receiptData = try? Data(
+          contentsOf: metadataURL.appendingPathComponent("INSTALL_RECEIPT.json")),
+        let receipt = try? JSONSerialization.jsonObject(with: receiptData) as? [String: Any],
         let source = receipt["source"] as? [String: Any],
         source["tap"] as? String == "s4na/try-s4na-tap",
         source["version"] as? String == version,
-        let artifacts = receipt["uninstall_artifacts"] as? [[String: Any]]
+        let artifacts = receipt["uninstall_artifacts"] as? [[String: Any]],
+        let configData = try? Data(contentsOf: metadataURL.appendingPathComponent("config.json")),
+        let config = try? JSONSerialization.jsonObject(with: configData) as? [String: Any]
       else {
         return false
       }
 
-      return artifacts.contains { artifact in
+      let explicitConfig = config["explicit"] as? [String: Any]
+      let defaultConfig = config["default"] as? [String: Any]
+      guard
+        let appDirectory = explicitConfig?["appdir"] as? String
+          ?? defaultConfig?["appdir"] as? String
+      else {
+        return false
+      }
+
+      let appTarget = artifacts.compactMap { artifact -> String? in
         guard
           let app = artifact["app"] as? [Any], app.count > 1,
-          let details = app[1] as? [String: Any],
-          details["target"] as? String == "Rocket (s4na).app"
+          let details = app[1] as? [String: Any]
         else {
-          return false
+          return nil
         }
-        return true
-      }
+        return details["target"] as? String ?? app[0] as? String
+      }.first
+      guard let appTarget else { return false }
+
+      let expectedAppURL = URL(fileURLWithPath: appDirectory)
+        .appendingPathComponent(appTarget)
+        .standardizedFileURL.resolvingSymlinksInPath()
+      return expectedAppURL == appURL.standardizedFileURL
     }
   }
 }
