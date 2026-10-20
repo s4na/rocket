@@ -48,6 +48,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     windowItem.submenu = windowMenu
     menu.addItem(windowItem)
     menu.addItem(.separator())
+    let about = NSMenuItem(
+      title: "About Rocket", action: #selector(showAbout), keyEquivalent: ""
+    )
+    about.target = self
+    menu.addItem(about)
+    menu.addItem(.separator())
     menu.addItem(
       NSMenuItem(
         title: "Quit Rocket", action: #selector(NSApplication.terminate(_:)), keyEquivalent: "q"
@@ -122,5 +128,29 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
   @objc private func showLauncher() {
     launcher?.show()
+  }
+
+  @objc private func showAbout() {
+    let bundle = Bundle.main
+    let version =
+      bundle.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+      ?? "Unknown"
+    let build =
+      bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String
+      ?? "Unknown"
+    let appURL = bundle.bundleURL.resolvingSymlinksInPath()
+    let isHomebrewInstall = appURL.pathComponents.contains { $0 == "Caskroom" || $0 == "Cellar" }
+    let installationDetails =
+      isHomebrewInstall
+      ? "Installed via Homebrew"
+      : "Build path: \(appURL.path)"
+
+    let alert = NSAlert()
+    alert.messageText = "About Rocket"
+    alert.informativeText = "Version: \(version) (\(build))\n\(installationDetails)"
+    alert.alertStyle = .informational
+    alert.icon = NSApp.applicationIconImage
+    alert.addButton(withTitle: "OK")
+    alert.runModal()
   }
 }

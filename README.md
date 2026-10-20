@@ -21,7 +21,8 @@ open .build/Rocket.app
 2. `Control–Option–Space` を押すとランチャーが開きます。反応しない場合はメニューバーのアイコンから **Open Rocket** を選んでください。
 3. **Add Applications…** から起動したい `.app` を登録し、検索欄に名前またはBundle IDを入力します。↑ / ↓ で選び、Return、**Open**、またはダブルクリックで起動します。
 4. **Remove** はRocketの登録だけを削除し、アプリ本体は削除しません。Escapeまたは**Close**で閉じると、直前に使っていたアプリに戻ります。
-5. Rocketを終了するには、メニューバーのアイコンから **Quit Rocket** を選びます。
+5. **About Rocket** にはアプリのバージョンが表示されます。Homebrew以外から起動した場合は、アプリのビルドパスも表示されます。
+6. Rocketを終了するには、メニューバーのアイコンから **Quit Rocket** を選びます。
 
 ウィンドウ配置を使う場合は、メニューバーから **Window Shortcuts → Enable Window Shortcuts** を選び、システム設定でRocketにアクセシビリティを許可します。その後、配置したいアプリのウィンドウを前面にして次のキーを押します。
 
