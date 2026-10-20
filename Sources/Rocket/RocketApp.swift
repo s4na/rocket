@@ -139,7 +139,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
       bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String
       ?? "Unknown"
     let appURL = bundle.bundleURL.resolvingSymlinksInPath()
-    let isHomebrewInstall = appURL.pathComponents.contains { $0 == "Caskroom" || $0 == "Cellar" }
+    let isHomebrewInstall =
+      appURL.pathComponents.contains { $0 == "Caskroom" || $0 == "Cellar" }
+      || isInstalledByRocketCask(appURL: appURL, version: version)
     let installationDetails =
       isHomebrewInstall
       ? "Installed via Homebrew"
@@ -152,5 +154,52 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     alert.icon = NSApp.applicationIconImage
     alert.addButton(withTitle: "OK")
     alert.runModal()
+  }
+
+  private func isInstalledByRocketCask(appURL: URL, version: String) -> Bool {
+    return ["/opt/homebrew", "/usr/local"].contains { prefix in
+      let metadataURL = URL(fileURLWithPath: prefix)
+        .appendingPathComponent("Caskroom/s4na-rocket/.metadata")
+      guard
+        let receiptData = try? Data(
+          contentsOf: metadataURL.appendingPathComponent("INSTALL_RECEIPT.json")),
+        let receipt = try? JSONSerialization.jsonObject(with: receiptData) as? [String: Any],
+        let source = receipt["source"] as? [String: Any],
+        source["tap"] as? String == "s4na/try-s4na-tap",
+        source["version"] as? String == version,
+        let artifacts = receipt["uninstall_artifacts"] as? [[String: Any]],
+        let configData = try? Data(contentsOf: metadataURL.appendingPathComponent("config.json")),
+        let config = try? JSONSerialization.jsonObject(with: configData) as? [String: Any]
+      else {
+        return false
+      }
+
+      let explicitConfig = config["explicit"] as? [String: Any]
+      let environmentConfig = config["env"] as? [String: Any]
+      let defaultConfig = config["default"] as? [String: Any]
+      guard
+        let appDirectory = explicitConfig?["appdir"] as? String
+          ?? environmentConfig?["appdir"] as? String
+          ?? defaultConfig?["appdir"] as? String
+      else {
+        return false
+      }
+
+      let appTarget = artifacts.compactMap { artifact -> String? in
+        guard
+          let app = artifact["app"] as? [Any], app.count > 1,
+          let details = app[1] as? [String: Any]
+        else {
+          return nil
+        }
+        return details["target"] as? String ?? app[0] as? String
+      }.first
+      guard let appTarget else { return false }
+
+      let expectedAppURL = URL(fileURLWithPath: appDirectory)
+        .appendingPathComponent(appTarget)
+        .standardizedFileURL.resolvingSymlinksInPath()
+      return expectedAppURL == appURL.standardizedFileURL
+    }
   }
 }
