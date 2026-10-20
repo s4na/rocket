@@ -139,7 +139,9 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
       bundle.object(forInfoDictionaryKey: "CFBundleVersion") as? String
       ?? "Unknown"
     let appURL = bundle.bundleURL.resolvingSymlinksInPath()
-    let isHomebrewInstall = appURL.pathComponents.contains { $0 == "Caskroom" || $0 == "Cellar" }
+    let isHomebrewInstall =
+      appURL.pathComponents.contains { $0 == "Caskroom" || $0 == "Cellar" }
+      || isInstalledByRocketCask(appURL: appURL, version: version)
     let installationDetails =
       isHomebrewInstall
       ? "Installed via Homebrew"
@@ -152,5 +154,35 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     alert.icon = NSApp.applicationIconImage
     alert.addButton(withTitle: "OK")
     alert.runModal()
+  }
+
+  private func isInstalledByRocketCask(appURL: URL, version: String) -> Bool {
+    guard appURL.lastPathComponent == "Rocket (s4na).app" else { return false }
+
+    return ["/opt/homebrew", "/usr/local"].contains { prefix in
+      let receiptURL = URL(fileURLWithPath: prefix)
+        .appendingPathComponent("Caskroom/s4na-rocket/.metadata/INSTALL_RECEIPT.json")
+      guard
+        let data = try? Data(contentsOf: receiptURL),
+        let receipt = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+        let source = receipt["source"] as? [String: Any],
+        source["tap"] as? String == "s4na/try-s4na-tap",
+        source["version"] as? String == version,
+        let artifacts = receipt["uninstall_artifacts"] as? [[String: Any]]
+      else {
+        return false
+      }
+
+      return artifacts.contains { artifact in
+        guard
+          let app = artifact["app"] as? [Any], app.count > 1,
+          let details = app[1] as? [String: Any],
+          details["target"] as? String == "Rocket (s4na).app"
+        else {
+          return false
+        }
+        return true
+      }
+    }
   }
 }
