@@ -15,6 +15,22 @@ bash scripts/build-app.sh
 open .build/Rocket.app
 ```
 
+## Homebrewからインストール
+
+Caskはこのリポジトリの [`Casks/s4na-rocket.rb`](Casks/s4na-rocket.rb) で管理しています。次のコマンドでインストールできます。
+
+```sh
+brew install --cask https://raw.githubusercontent.com/s4na/rocket/main/Casks/s4na-rocket.rb
+```
+
+新しいリリースに更新するときは、同じURLで再インストールします。
+
+```sh
+brew reinstall --cask https://raw.githubusercontent.com/s4na/rocket/main/Casks/s4na-rocket.rb
+```
+
+アプリは `/Applications/Rocket (s4na).app` にインストールされます。
+
 ## 使い方
 
 1. 上の手順でアプリをビルドして起動します。メニューバーに紙飛行機のアイコンが表示されます。
