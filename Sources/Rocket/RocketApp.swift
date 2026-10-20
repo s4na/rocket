@@ -175,9 +175,11 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
       }
 
       let explicitConfig = config["explicit"] as? [String: Any]
+      let environmentConfig = config["env"] as? [String: Any]
       let defaultConfig = config["default"] as? [String: Any]
       guard
         let appDirectory = explicitConfig?["appdir"] as? String
+          ?? environmentConfig?["appdir"] as? String
           ?? defaultConfig?["appdir"] as? String
       else {
         return false
