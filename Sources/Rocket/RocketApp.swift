@@ -156,6 +156,14 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
     alert.runModal()
   }
 
+  private func isRocketCaskSource(_ source: [String: Any]) -> Bool {
+    let sampleTap = source["tap"] as? String == "s4na/try-s4na-tap"
+    let repositoryCask =
+      source["path"] as? String
+      == "https://raw.githubusercontent.com/s4na/rocket/main/Casks/s4na-rocket.rb"
+    return sampleTap || repositoryCask
+  }
+
   private func isInstalledByRocketCask(appURL: URL, version: String) -> Bool {
     return ["/opt/homebrew", "/usr/local"].contains { prefix in
       let metadataURL = URL(fileURLWithPath: prefix)
@@ -165,7 +173,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
           contentsOf: metadataURL.appendingPathComponent("INSTALL_RECEIPT.json")),
         let receipt = try? JSONSerialization.jsonObject(with: receiptData) as? [String: Any],
         let source = receipt["source"] as? [String: Any],
-        source["tap"] as? String == "s4na/try-s4na-tap",
+        isRocketCaskSource(source),
         source["version"] as? String == version,
         let artifacts = receipt["uninstall_artifacts"] as? [[String: Any]],
         let configData = try? Data(contentsOf: metadataURL.appendingPathComponent("config.json")),
