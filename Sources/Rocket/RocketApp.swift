@@ -157,11 +157,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
   }
 
   private func isRocketCaskSource(_ source: [String: Any]) -> Bool {
-    let sampleTap = source["tap"] as? String == "s4na/try-s4na-tap"
-    let repositoryCask =
-      source["path"] as? String
-      == "https://raw.githubusercontent.com/s4na/rocket/main/Casks/s4na-rocket.rb"
-    return sampleTap || repositoryCask
+    return source["tap"] as? String == "s4na/rocket"
   }
 
   private func isInstalledByRocketCask(appURL: URL, version: String) -> Bool {

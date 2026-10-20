@@ -17,16 +17,18 @@ open .build/Rocket.app
 
 ## Homebrewからインストール
 
-Caskはこのリポジトリの [`Casks/s4na-rocket.rb`](Casks/s4na-rocket.rb) で管理しています。次のコマンドでインストールできます。
+Caskはこのリポジトリの [`Casks/s4na-rocket.rb`](Casks/s4na-rocket.rb) で管理しています。このリポジトリをtapとして登録してインストールします。
 
 ```sh
-brew install --cask https://raw.githubusercontent.com/s4na/rocket/main/Casks/s4na-rocket.rb
+brew tap s4na/rocket https://github.com/s4na/rocket
+brew install --cask s4na/rocket/s4na-rocket
 ```
 
-新しいリリースに更新するときは、同じURLで再インストールします。
+新しいリリースに更新するときは、tapを更新してからアップグレードします。
 
 ```sh
-brew reinstall --cask https://raw.githubusercontent.com/s4na/rocket/main/Casks/s4na-rocket.rb
+brew update
+brew upgrade --cask s4na/rocket/s4na-rocket
 ```
 
 アプリは `/Applications/Rocket (s4na).app` にインストールされます。
